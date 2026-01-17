@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Routine Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #CC0000;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            transition: background-color 0.1s ease;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        body.completed {
+            background-color: #00CC00;
+            color: black;
+        }
+
+        .container {
+            text-align: center;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .task {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 40px;
+            line-height: 1.4;
+        }
+
+        .implementation {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin-top: 20px;
+        }
+
+        .nav {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+        }
+
+        .nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            padding: 10px 20px;
+            border: 2px solid white;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        body.completed .nav a {
+            color: black;
+            border-color: black;
+        }
+
+        .nav a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .task {
+                font-size: 2rem;
+            }
+            
+            .implementation {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <a href="notes.html">Notes & Rules</a>
+    </div>
+
+    <div class="container">
+        <div class="task" id="currentTask"></div>
+        <div class="implementation" id="implementation"></div>
+    </div>
+
+    <script>
+        const tasks = [
+            {
+                task: "Alarm goes off - 15 minutes to wake up",
+                implementation: "If my alarm goes off, then I stand up immediately"
+            },
+            {
+                task: "Get out of bed",
+                implementation: "If I stand up, then I drink water"
+            },
+            {
+                task: "Open blinds",
+                implementation: "If I drink water, then I open blinds"
+            },
+            {
+                task: "Shower",
+                implementation: "If I open blinds, then I go shower"
+            },
+            {
+                task: "Visualization and affirmations",
+                implementation: "If I finish shower, then I do visualization and affirmations"
+            },
+            {
+                task: "Make bed",
+                implementation: "If I finish affirmations, then I make my bed"
+            },
+            {
+                task: "Get dressed",
+                implementation: "If I make my bed, then I get dressed"
+            },
+            {
+                task: "Go upstairs",
+                implementation: "If I get dressed, then I go upstairs"
+            },
+            {
+                task: "Make coffee",
+                implementation: "If I go upstairs, then I make coffee"
+            },
+            {
+                task: "Chill for 15 minutes",
+                implementation: "If coffee is ready, then I chill for 15 minutes"
+            },
+            {
+                task: "Get breakfast",
+                implementation: "If 15 minutes is up, then I get breakfast"
+            },
+            {
+                task: "Plan the day",
+                implementation: "If I finish breakfast, then I plan my day"
+            },
+            {
+                task: "9:00am - Prep for meeting",
+                implementation: "If it's 9am, then I do my starting ritual"
+            },
+            {
+                task: "9:45am - Meeting (30 min)",
+                implementation: "If it's 9:45am, then I join the meeting"
+            },
+            {
+                task: "After meeting - 15 min of work",
+                implementation: "If the meeting ends, then I do 15 min of work"
+            },
+            {
+                task: "Short productive break (beach, shops, tidying, etc.)",
+                implementation: "If 15 min work is done, then I take a short productive break"
+            },
+            {
+                task: "Choose: Muay Thai OR Work Block 1",
+                implementation: "If my break is done, then I choose muay thai or work block 1"
+            },
+            {
+                task: "Work Block 1: 30 min work",
+                implementation: "If I choose work block 1, then I do my starting ritual"
+            },
+            {
+                task: "10 min break",
+                implementation: "If my 30 min timer goes off, then I take a 10 min break"
+            },
+            {
+                task: "Work Block 1: 30 min work (continued)",
+                implementation: "If my 10 min break ends, then I do another 30 min work block"
+            },
+            {
+                task: "Lunch",
+                implementation: "If work block 1 is done, then I have lunch"
+            },
+            {
+                task: "Free time - 1 hour (whatever you want)",
+                implementation: "If lunch is done, then I have 1 hour free time"
+            },
+            {
+                task: "Work Block 2: 30 min work",
+                implementation: "If free time ends, then I do my starting ritual for work block 2"
+            },
+            {
+                task: "10 min break",
+                implementation: "If my 30 min timer goes off, then I take a 10 min break"
+            },
+            {
+                task: "Work Block 2: 30 min work (continued)",
+                implementation: "If my 10 min break ends, then I do another 30 min work block"
+            },
+            {
+                task: "Close all work tabs",
+                implementation: "If work block 2 is done, then I close all work tabs"
+            },
+            {
+                task: "20 min reading or YouTube 'to watch list'",
+                implementation: "If I close work tabs, then I do 20 min reading or YouTube to watch list"
+            },
+            {
+                task: "8:00pm - Last meal (nothing after this)",
+                implementation: "If it's 8pm, then I stop eating"
+            },
+            {
+                task: "1 hour before bed - Shower",
+                implementation: "If it's 1 hour before bed, then I go shower"
+            },
+            {
+                task: "Teeth and skincare",
+                implementation: "If I finish shower, then I do teeth and skincare"
+            },
+            {
+                task: "Lights off",
+                implementation: "If I finish in bathroom, then I turn off lights"
+            },
+            {
+                task: "30 min reading OR YouTube 'to watch list'",
+                implementation: "If lights are off, then I read or watch YouTube to watch list for 30 min"
+            },
+            {
+                task: "Sleep (Bedtime: 9-11pm)",
+                implementation: "If 30 min is up, then I go to sleep"
+            }
+        ];
+
+        let currentIndex = 0;
+        let isCompleting = false;
+
+        function updateTask() {
+            const taskElement = document.getElementById('currentTask');
+            const implElement = document.getElementById('implementation');
+            
+            if (currentIndex < tasks.length) {
+                taskElement.textContent = tasks[currentIndex].task;
+                implElement.textContent = `(${tasks[currentIndex].implementation})`;
+            } else {
+                taskElement.textContent = "All tasks complete! 🎉";
+                implElement.textContent = "Great job today!";
+            }
+        }
+
+        document.body.addEventListener('click', function() {
+            if (isCompleting) return;
+            
+            isCompleting = true;
+            document.body.classList.add('completed');
+            
+            setTimeout(() => {
+                document.body.classList.remove('completed');
+                currentIndex++;
+                updateTask();
+                isCompleting = false;
+            }, 1000);
+        });
+
+        // Initialize
+        updateTask();
+    </script>
+</body>
+</html>
